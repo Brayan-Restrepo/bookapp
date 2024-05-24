@@ -1,0 +1,31 @@
+scalar Time
+
+type Book {
+  id: ID!
+  title: String!
+  author: User!
+  createdAt: Time!
+}
+
+type User {
+  id: ID!
+  name: String!
+  books: [Book!]!
+}
+
+type Query {
+  books: [Book!]
+  book(id: ID!): Book
+  users: [User!]
+  user(id: ID!): User
+}
+
+type Mutation {
+  createBook(title: String!, authorId: Int!): Book!
+  updateBook(id: Int!, title: String, authorId: Int!): Book!
+  deleteBook(id: Int!): Book!
+
+  createUser(name: String!): User!
+  updateUser(id: Int!, name: String): User!
+  deleteUser(id: Int!): User!
+}
