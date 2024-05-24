@@ -113,7 +113,14 @@ func (r *queryResolver) User(ctx context.Context, id string) (*ent.User, error) 
 
 // Books is the resolver for the books field.
 func (r *userResolver) Books(ctx context.Context, obj *ent.User) ([]*ent.Book, error) {
-	panic(fmt.Errorf("not implemented: Books - books"))
+	books, err := obj.QueryBooks().All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for _, book := range books {
+		fmt.Println(book.ID, book.Title)
+	}
+	return books, nil
 }
 
 // Book returns BookResolver implementation.

@@ -37,3 +37,115 @@ go generate
 go run github.com/99designs/gqlgen generate
 ```
 
+## CRUD - User
+
+**Consultar Users**
+```graphql
+{
+    users {
+        id
+        name
+        books {
+            id
+            title
+            author {
+                name
+            }
+            createdAt
+        }
+    }
+}
+```
+**Create User**
+```graphql
+mutation {
+    createUser(name: "Juan") {
+        id
+        name
+    }
+}
+```
+**Update User**
+```graphql
+mutation {
+    updateUser(id: 6, name: "Anis") {
+        id
+        name
+    }
+}
+```
+**Delete User**
+```graphql
+mutation {
+    deleteUser(id: 5) {
+        id
+        name
+    }
+}
+```
+
+## CRUD - Book
+
+**Get Book**
+```graphql
+{
+    book(id:1) {
+        id
+        title
+        author {
+            name
+        }
+        createdAt
+    }
+}
+```
+**Get Books**
+```graphql
+{
+  books {
+    id
+    title
+    author {
+      name
+    }
+    createdAt
+  }
+}
+```
+**Create Book**
+```graphql
+mutation {
+  createBook(title: "The Go Programming Language", authorId: 2) {
+    id
+    title
+    author {
+      name
+    }
+  }
+}
+```
+**Update Book**
+```graphql
+mutation {
+  updateBook(
+    id: 2
+    title: "Concurrency in Go: Tools and Techniques for Developers"
+    authorId: 1
+  ) {
+    id
+    title
+    author {
+      name
+    }
+  }
+}
+```
+**Delete Book**
+```graphql
+mutation {
+  deleteBook(id: 4) {
+    id
+    title
+  }
+}
+```
