@@ -10,7 +10,14 @@ mkdir bookapp
 cd gqlgen-todos
 go mod init github.com/Brayan-Restrepo/bookapp
 ```
+# entgo
 
+Despues de crear o modificar el schema se debe generar el schema nuevamente
+```bash
+go generate ./ent
+```
+
+# gqlgen
 Se crea el archivo tools.go
 
 ```bash

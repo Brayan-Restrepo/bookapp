@@ -22,22 +22,23 @@ func (r *bookResolver) Author(ctx context.Context, obj *ent.Book) (*ent.User, er
 }
 
 // CreateBook is the resolver for the createBook field.
-func (r *mutationResolver) CreateBook(ctx context.Context, title string, authorID int) (*ent.Book, error) {
+func (r *mutationResolver) CreateBook(ctx context.Context, title string, authorID int, theme *string) (*ent.Book, error) {
 	return r.Client.Book.
 		Create().
 		SetTitle(title).
 		SetAuthorID(authorID).
 		SetCreatedAt(time.Now()).
+		SetNillableTheme(theme).
 		Save(ctx)
 }
 
 // UpdateBook is the resolver for the updateBook field.
-func (r *mutationResolver) UpdateBook(ctx context.Context, id int, title *string, authorID int) (*ent.Book, error) {
+func (r *mutationResolver) UpdateBook(ctx context.Context, id int, title *string, authorID int, theme *string) (*ent.Book, error) {
 	update := r.Client.Book.UpdateOneID(id)
 	if title != nil {
 		update.SetTitle(*title)
 	}
-
+	update.SetNillableTheme(theme)
 	update.SetAuthorID(authorID)
 	return update.Save(ctx)
 }

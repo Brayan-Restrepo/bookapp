@@ -18,6 +18,8 @@ const (
 	FieldTitle = "title"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
+	// FieldTheme holds the string denoting the theme field in the database.
+	FieldTheme = "theme"
 	// EdgeAuthor holds the string denoting the author edge name in mutations.
 	EdgeAuthor = "author"
 	// Table holds the table name of the book in the database.
@@ -36,6 +38,7 @@ var Columns = []string{
 	FieldID,
 	FieldTitle,
 	FieldCreatedAt,
+	FieldTheme,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "books"
@@ -80,6 +83,11 @@ func ByTitle(opts ...sql.OrderTermOption) OrderOption {
 // ByCreatedAt orders the results by the created_at field.
 func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByTheme orders the results by the theme field.
+func ByTheme(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTheme, opts...).ToFunc()
 }
 
 // ByAuthorField orders the results by author field.

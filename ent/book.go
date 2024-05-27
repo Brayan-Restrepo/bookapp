@@ -22,6 +22,8 @@ type Book struct {
 	Title string `json:"title,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
+	// Theme holds the value of the "theme" field.
+	Theme string `json:"theme,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BookQuery when eager-loading is set.
 	Edges        BookEdges `json:"edges"`
@@ -56,7 +58,7 @@ func (*Book) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case book.FieldID:
 			values[i] = new(sql.NullInt64)
-		case book.FieldTitle:
+		case book.FieldTitle, book.FieldTheme:
 			values[i] = new(sql.NullString)
 		case book.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -94,6 +96,12 @@ func (b *Book) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				b.CreatedAt = value.Time
+			}
+		case book.FieldTheme:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field theme", values[i])
+			} else if value.Valid {
+				b.Theme = value.String
 			}
 		case book.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -148,6 +156,9 @@ func (b *Book) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(b.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("theme=")
+	builder.WriteString(b.Theme)
 	builder.WriteByte(')')
 	return builder.String()
 }

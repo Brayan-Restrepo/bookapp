@@ -57,6 +57,26 @@ func (bu *BookUpdate) SetNillableCreatedAt(t *time.Time) *BookUpdate {
 	return bu
 }
 
+// SetTheme sets the "theme" field.
+func (bu *BookUpdate) SetTheme(s string) *BookUpdate {
+	bu.mutation.SetTheme(s)
+	return bu
+}
+
+// SetNillableTheme sets the "theme" field if the given value is not nil.
+func (bu *BookUpdate) SetNillableTheme(s *string) *BookUpdate {
+	if s != nil {
+		bu.SetTheme(*s)
+	}
+	return bu
+}
+
+// ClearTheme clears the value of the "theme" field.
+func (bu *BookUpdate) ClearTheme() *BookUpdate {
+	bu.mutation.ClearTheme()
+	return bu
+}
+
 // SetAuthorID sets the "author" edge to the User entity by ID.
 func (bu *BookUpdate) SetAuthorID(id int) *BookUpdate {
 	bu.mutation.SetAuthorID(id)
@@ -132,6 +152,12 @@ func (bu *BookUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := bu.mutation.CreatedAt(); ok {
 		_spec.SetField(book.FieldCreatedAt, field.TypeTime, value)
 	}
+	if value, ok := bu.mutation.Theme(); ok {
+		_spec.SetField(book.FieldTheme, field.TypeString, value)
+	}
+	if bu.mutation.ThemeCleared() {
+		_spec.ClearField(book.FieldTheme, field.TypeString)
+	}
 	if bu.mutation.AuthorCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -206,6 +232,26 @@ func (buo *BookUpdateOne) SetNillableCreatedAt(t *time.Time) *BookUpdateOne {
 	if t != nil {
 		buo.SetCreatedAt(*t)
 	}
+	return buo
+}
+
+// SetTheme sets the "theme" field.
+func (buo *BookUpdateOne) SetTheme(s string) *BookUpdateOne {
+	buo.mutation.SetTheme(s)
+	return buo
+}
+
+// SetNillableTheme sets the "theme" field if the given value is not nil.
+func (buo *BookUpdateOne) SetNillableTheme(s *string) *BookUpdateOne {
+	if s != nil {
+		buo.SetTheme(*s)
+	}
+	return buo
+}
+
+// ClearTheme clears the value of the "theme" field.
+func (buo *BookUpdateOne) ClearTheme() *BookUpdateOne {
+	buo.mutation.ClearTheme()
 	return buo
 }
 
@@ -313,6 +359,12 @@ func (buo *BookUpdateOne) sqlSave(ctx context.Context) (_node *Book, err error) 
 	}
 	if value, ok := buo.mutation.CreatedAt(); ok {
 		_spec.SetField(book.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := buo.mutation.Theme(); ok {
+		_spec.SetField(book.FieldTheme, field.TypeString, value)
+	}
+	if buo.mutation.ThemeCleared() {
+		_spec.ClearField(book.FieldTheme, field.TypeString)
 	}
 	if buo.mutation.AuthorCleared() {
 		edge := &sqlgraph.EdgeSpec{

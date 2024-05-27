@@ -54,15 +54,16 @@ type ComplexityRoot struct {
 		Author    func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
 		ID        func(childComplexity int) int
+		Theme     func(childComplexity int) int
 		Title     func(childComplexity int) int
 	}
 
 	Mutation struct {
-		CreateBook func(childComplexity int, title string, authorID int) int
+		CreateBook func(childComplexity int, title string, authorID int, theme *string) int
 		CreateUser func(childComplexity int, name string) int
 		DeleteBook func(childComplexity int, id int) int
 		DeleteUser func(childComplexity int, id int) int
-		UpdateBook func(childComplexity int, id int, title *string, authorID int) int
+		UpdateBook func(childComplexity int, id int, title *string, authorID int, theme *string) int
 		UpdateUser func(childComplexity int, id int, name *string) int
 	}
 
@@ -84,8 +85,8 @@ type BookResolver interface {
 	Author(ctx context.Context, obj *ent.Book) (*ent.User, error)
 }
 type MutationResolver interface {
-	CreateBook(ctx context.Context, title string, authorID int) (*ent.Book, error)
-	UpdateBook(ctx context.Context, id int, title *string, authorID int) (*ent.Book, error)
+	CreateBook(ctx context.Context, title string, authorID int, theme *string) (*ent.Book, error)
+	UpdateBook(ctx context.Context, id int, title *string, authorID int, theme *string) (*ent.Book, error)
 	DeleteBook(ctx context.Context, id int) (*ent.Book, error)
 	CreateUser(ctx context.Context, name string) (*ent.User, error)
 	UpdateUser(ctx context.Context, id int, name *string) (*ent.User, error)
@@ -141,6 +142,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Book.ID(childComplexity), true
 
+	case "Book.theme":
+		if e.complexity.Book.Theme == nil {
+			break
+		}
+
+		return e.complexity.Book.Theme(childComplexity), true
+
 	case "Book.title":
 		if e.complexity.Book.Title == nil {
 			break
@@ -158,7 +166,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateBook(childComplexity, args["title"].(string), args["authorId"].(int)), true
+		return e.complexity.Mutation.CreateBook(childComplexity, args["title"].(string), args["authorId"].(int), args["theme"].(*string)), true
 
 	case "Mutation.createUser":
 		if e.complexity.Mutation.CreateUser == nil {
@@ -206,7 +214,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateBook(childComplexity, args["id"].(int), args["title"].(*string), args["authorId"].(int)), true
+		return e.complexity.Mutation.UpdateBook(childComplexity, args["id"].(int), args["title"].(*string), args["authorId"].(int), args["theme"].(*string)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -423,6 +431,15 @@ func (ec *executionContext) field_Mutation_createBook_args(ctx context.Context, 
 		}
 	}
 	args["authorId"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["theme"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("theme"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["theme"] = arg2
 	return args, nil
 }
 
@@ -501,6 +518,15 @@ func (ec *executionContext) field_Mutation_updateBook_args(ctx context.Context, 
 		}
 	}
 	args["authorId"] = arg2
+	var arg3 *string
+	if tmp, ok := rawArgs["theme"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("theme"))
+		arg3, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["theme"] = arg3
 	return args, nil
 }
 
@@ -795,6 +821,47 @@ func (ec *executionContext) fieldContext_Book_createdAt(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Book_theme(ctx context.Context, field graphql.CollectedField, obj *ent.Book) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Book_theme(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Theme, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Book_theme(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Book",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createBook(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createBook(ctx, field)
 	if err != nil {
@@ -809,7 +876,7 @@ func (ec *executionContext) _Mutation_createBook(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateBook(rctx, fc.Args["title"].(string), fc.Args["authorId"].(int))
+		return ec.resolvers.Mutation().CreateBook(rctx, fc.Args["title"].(string), fc.Args["authorId"].(int), fc.Args["theme"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -842,6 +909,8 @@ func (ec *executionContext) fieldContext_Mutation_createBook(ctx context.Context
 				return ec.fieldContext_Book_author(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Book_createdAt(ctx, field)
+			case "theme":
+				return ec.fieldContext_Book_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Book", field.Name)
 		},
@@ -874,7 +943,7 @@ func (ec *executionContext) _Mutation_updateBook(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateBook(rctx, fc.Args["id"].(int), fc.Args["title"].(*string), fc.Args["authorId"].(int))
+		return ec.resolvers.Mutation().UpdateBook(rctx, fc.Args["id"].(int), fc.Args["title"].(*string), fc.Args["authorId"].(int), fc.Args["theme"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -907,6 +976,8 @@ func (ec *executionContext) fieldContext_Mutation_updateBook(ctx context.Context
 				return ec.fieldContext_Book_author(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Book_createdAt(ctx, field)
+			case "theme":
+				return ec.fieldContext_Book_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Book", field.Name)
 		},
@@ -972,6 +1043,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteBook(ctx context.Context
 				return ec.fieldContext_Book_author(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Book_createdAt(ctx, field)
+			case "theme":
+				return ec.fieldContext_Book_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Book", field.Name)
 		},
@@ -1223,6 +1296,8 @@ func (ec *executionContext) fieldContext_Query_books(_ context.Context, field gr
 				return ec.fieldContext_Book_author(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Book_createdAt(ctx, field)
+			case "theme":
+				return ec.fieldContext_Book_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Book", field.Name)
 		},
@@ -1274,6 +1349,8 @@ func (ec *executionContext) fieldContext_Query_book(ctx context.Context, field g
 				return ec.fieldContext_Book_author(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Book_createdAt(ctx, field)
+			case "theme":
+				return ec.fieldContext_Book_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Book", field.Name)
 		},
@@ -1665,6 +1742,8 @@ func (ec *executionContext) fieldContext_User_books(_ context.Context, field gra
 				return ec.fieldContext_Book_author(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Book_createdAt(ctx, field)
+			case "theme":
+				return ec.fieldContext_Book_theme(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Book", field.Name)
 		},
@@ -3515,6 +3594,8 @@ func (ec *executionContext) _Book(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "theme":
+			out.Values[i] = ec._Book_theme(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4646,6 +4727,16 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	res := graphql.MarshalBoolean(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
+	res, err := graphql.UnmarshalString(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	res := graphql.MarshalString(v)
 	return res
 }
 

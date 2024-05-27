@@ -5,6 +5,7 @@ type Book {
   title: String!
   author: User!
   createdAt: Time!
+  theme: String
 }
 
 type User {
@@ -21,8 +22,8 @@ type Query {
 }
 
 type Mutation {
-  createBook(title: String!, authorId: Int!): Book!
-  updateBook(id: Int!, title: String, authorId: Int!): Book!
+  createBook(title: String!, authorId: Int!, theme: String): Book!
+  updateBook(id: Int!, title: String, authorId: Int!, theme: String): Book!
   deleteBook(id: Int!): Book!
 
   createUser(name: String!): User!
