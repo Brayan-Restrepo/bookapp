@@ -11,7 +11,7 @@ import (
 
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
-// to their package variables.
+// to their package env.
 func init() {
 	bookFields := schema.Book{}.Fields()
 	_ = bookFields

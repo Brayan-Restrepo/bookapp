@@ -1,26 +1,29 @@
 package main
 
 import (
+	"bookapp/config"
 	"bookapp/ent"
 	"bookapp/graph"
 	"context"
+	"fmt"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	_ "github.com/lib/pq"
 	"log"
 	"net/http"
-	"os"
 )
 
-const defaultPort = "8080"
-
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = defaultPort
-	}
 
-	dsn := "host=localhost port=5432 user=root password=toor dbname=bookapp sslmode=disable"
+	dsn := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+		config.Getting().Database.Host,
+		config.Getting().Database.Port,
+		config.Getting().Database.User,
+		config.Getting().Database.Password,
+		config.Getting().Database.DBName,
+		config.Getting().Database.SSLMode)
+
 	client, err := ent.Open("postgres", dsn)
 
 	if err != nil {
@@ -39,6 +42,6 @@ func main() {
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", config.Getting().Server.Port)
+	log.Fatal(http.ListenAndServe(":"+config.Getting().Server.Port, nil))
 }
