@@ -1,5 +1,10 @@
 # CRUD Book -> Author
 
+**Run the project**
+```bash
+go run server.go --env=dev
+```
+**Primeros pasos**
 ```bash
 mkdir bookapp
 cd gqlgen-todos
@@ -149,3 +154,4 @@ mutation {
   }
 }
 ```
+

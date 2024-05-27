@@ -1,0 +1,16 @@
+server:
+  port: "8000"
+  allowOrigins:
+  - "*"
+  timeout: 30 # Seconds
+  bodyLimit: "10M" # MiB
+  prefixPath: "/xx"
+
+database:
+  host: localhost
+  port: 5432
+  user: xxx
+  password: xxx
+  dbname: bookapp
+  sslmode: disable
+  schema: public
