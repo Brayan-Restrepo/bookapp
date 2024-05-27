@@ -41,6 +41,20 @@ func (bc *BookCreate) SetNillableCreatedAt(t *time.Time) *BookCreate {
 	return bc
 }
 
+// SetTheme sets the "theme" field.
+func (bc *BookCreate) SetTheme(s string) *BookCreate {
+	bc.mutation.SetTheme(s)
+	return bc
+}
+
+// SetNillableTheme sets the "theme" field if the given value is not nil.
+func (bc *BookCreate) SetNillableTheme(s *string) *BookCreate {
+	if s != nil {
+		bc.SetTheme(*s)
+	}
+	return bc
+}
+
 // SetAuthorID sets the "author" edge to the User entity by ID.
 func (bc *BookCreate) SetAuthorID(id int) *BookCreate {
 	bc.mutation.SetAuthorID(id)
@@ -137,6 +151,10 @@ func (bc *BookCreate) createSpec() (*Book, *sqlgraph.CreateSpec) {
 	if value, ok := bc.mutation.CreatedAt(); ok {
 		_spec.SetField(book.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
+	}
+	if value, ok := bc.mutation.Theme(); ok {
+		_spec.SetField(book.FieldTheme, field.TypeString, value)
+		_node.Theme = value
 	}
 	if nodes := bc.mutation.AuthorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -37,6 +37,7 @@ type BookMutation struct {
 	id            *int
 	title         *string
 	created_at    *time.Time
+	theme         *string
 	clearedFields map[string]struct{}
 	author        *int
 	clearedauthor bool
@@ -215,6 +216,55 @@ func (m *BookMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
+// SetTheme sets the "theme" field.
+func (m *BookMutation) SetTheme(s string) {
+	m.theme = &s
+}
+
+// Theme returns the value of the "theme" field in the mutation.
+func (m *BookMutation) Theme() (r string, exists bool) {
+	v := m.theme
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTheme returns the old "theme" field's value of the Book entity.
+// If the Book object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BookMutation) OldTheme(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTheme is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTheme requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTheme: %w", err)
+	}
+	return oldValue.Theme, nil
+}
+
+// ClearTheme clears the value of the "theme" field.
+func (m *BookMutation) ClearTheme() {
+	m.theme = nil
+	m.clearedFields[book.FieldTheme] = struct{}{}
+}
+
+// ThemeCleared returns if the "theme" field was cleared in this mutation.
+func (m *BookMutation) ThemeCleared() bool {
+	_, ok := m.clearedFields[book.FieldTheme]
+	return ok
+}
+
+// ResetTheme resets all changes to the "theme" field.
+func (m *BookMutation) ResetTheme() {
+	m.theme = nil
+	delete(m.clearedFields, book.FieldTheme)
+}
+
 // SetAuthorID sets the "author" edge to the User entity by id.
 func (m *BookMutation) SetAuthorID(id int) {
 	m.author = &id
@@ -288,12 +338,15 @@ func (m *BookMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BookMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.title != nil {
 		fields = append(fields, book.FieldTitle)
 	}
 	if m.created_at != nil {
 		fields = append(fields, book.FieldCreatedAt)
+	}
+	if m.theme != nil {
+		fields = append(fields, book.FieldTheme)
 	}
 	return fields
 }
@@ -307,6 +360,8 @@ func (m *BookMutation) Field(name string) (ent.Value, bool) {
 		return m.Title()
 	case book.FieldCreatedAt:
 		return m.CreatedAt()
+	case book.FieldTheme:
+		return m.Theme()
 	}
 	return nil, false
 }
@@ -320,6 +375,8 @@ func (m *BookMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldTitle(ctx)
 	case book.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
+	case book.FieldTheme:
+		return m.OldTheme(ctx)
 	}
 	return nil, fmt.Errorf("unknown Book field %s", name)
 }
@@ -342,6 +399,13 @@ func (m *BookMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
+		return nil
+	case book.FieldTheme:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTheme(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Book field %s", name)
@@ -372,7 +436,11 @@ func (m *BookMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *BookMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(book.FieldTheme) {
+		fields = append(fields, book.FieldTheme)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -385,6 +453,11 @@ func (m *BookMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *BookMutation) ClearField(name string) error {
+	switch name {
+	case book.FieldTheme:
+		m.ClearTheme()
+		return nil
+	}
 	return fmt.Errorf("unknown Book nullable field %s", name)
 }
 
@@ -397,6 +470,9 @@ func (m *BookMutation) ResetField(name string) error {
 		return nil
 	case book.FieldCreatedAt:
 		m.ResetCreatedAt()
+		return nil
+	case book.FieldTheme:
+		m.ResetTheme()
 		return nil
 	}
 	return fmt.Errorf("unknown Book field %s", name)

@@ -13,6 +13,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "title", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
+		{Name: "theme", Type: field.TypeString, Nullable: true},
 		{Name: "user_books", Type: field.TypeInt},
 	}
 	// BooksTable holds the schema information for the "books" table.
@@ -23,7 +24,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "books_users_books",
-				Columns:    []*schema.Column{BooksColumns[3]},
+				Columns:    []*schema.Column{BooksColumns[4]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

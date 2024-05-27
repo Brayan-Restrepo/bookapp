@@ -18,6 +18,7 @@ func (Book) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("title"),
 		field.Time("created_at").Default(time.Now),
+		field.String("theme").Optional(),
 	}
 }
 

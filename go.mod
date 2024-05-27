@@ -5,6 +5,7 @@ go 1.22.3
 require (
 	entgo.io/ent v0.13.1
 	github.com/99designs/gqlgen v0.17.47
+	github.com/go-playground/validator/v10 v10.20.0
 	github.com/lib/pq v1.10.9
 	github.com/spf13/viper v1.18.2
 	github.com/vektah/gqlparser/v2 v2.5.12
@@ -21,7 +22,6 @@ require (
 	github.com/go-openapi/inflect v0.19.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.20.0 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
